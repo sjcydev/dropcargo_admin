@@ -81,7 +81,7 @@
       <Text style={paragraph}>
         El sistema de facturación se encuentra en este enlace <Link
           href="https://admin.dropcargoexpress.com/"
-          >https://admin.cargo.com/</Link
+          >https://admin.dropcargoexpress.com/</Link
         >. Al entrar al enlace, te mandara a iniciar sesión. Usa los detalles de
         la cuenta que se encuentra en la sección de abajo.
       </Text>

@@ -85,6 +85,12 @@
         >. Al entrar al enlace, te mandara a iniciar sesión. Usa los detalles de
         la cuenta que se encuentra en la sección de abajo.
       </Text>
+      <Text style={paragraph}>
+        Nota: El sistema no esta totalmente terminado ya que es más complicado
+        por ende tomara más tiempo. Por ahora solo podrás ver el listado de los
+        clientes que se registran. Aparte tambien recibiras correos de nuevo
+        clientes.
+      </Text>
       <Hr style={hr} />
       <Heading style={heading2}>Información de la Cuenta del Usuario</Heading>
       <Text style={paragraph}>

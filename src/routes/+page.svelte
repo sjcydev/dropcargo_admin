@@ -47,7 +47,7 @@ ${usuario.cedula} ${usuario.telefono} ${usuario.correo}`,
       </tr>
     </thead>
     <tbody>
-      {#each data.usuarios as usuario}
+      {#each $searchStore.filtered as usuario}
         <tr class="hover:bg-base-200">
           <th>{usuario.id}</th>
           <td>{usuario.nombre} {usuario.apellido}</td>

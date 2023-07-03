@@ -49,7 +49,7 @@ ${usuario.cedula} ${usuario.telefono} ${usuario.correo}`,
     <tbody>
       {#each $searchStore.filtered as usuario}
         <tr class="hover:bg-base-200">
-          <th>{usuario.id}</th>
+          <th>{usuario.casillero}</th>
           <td>{usuario.nombre} {usuario.apellido}</td>
           <td>{usuario.correo}</td>
           <td>{usuario.telefono}</td>

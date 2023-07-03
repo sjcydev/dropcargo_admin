@@ -16,12 +16,7 @@
   let registering = false;
   async function actulizarCasillero(event: Event) {
     registering = true;
-    if (
-      typeof usuario.casillero === "string" &&
-      parseInt(usuario.casillero) &&
-      usuario.casillero >= 0 &&
-      usuario.casillero < 1000
-    ) {
+    if (typeof usuario.casillero === "string" && parseInt(usuario.casillero)) {
       await axios
         .post(`/api/clientes/${usuario.id}`, { usuario })
         .then(({ data }) => {
@@ -48,7 +43,7 @@
 >
   <div class="card-body">
     <h1 class="text-2xl text-left font-medium tracking-wide">
-      Actualizar Casillero {usuario.casillero}
+      Actualizar Casillero
     </h1>
     <div class="form-control mt-3 lg:mt-4">
       <input

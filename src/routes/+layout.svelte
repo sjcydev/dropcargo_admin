@@ -1,58 +1,60 @@
 <script>
-	import { page } from '$app/stores';
-	import '../app.css';
-	import { SvelteToast } from '@zerodevx/svelte-toast';
-	import Fa from 'svelte-fa';
-	import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+  import { page } from "$app/stores";
+  import "../app.css";
+  import { SvelteToast } from "@zerodevx/svelte-toast";
+  import Fa from "svelte-fa";
+  import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 
-	let options = {
-		theme: {
-			'--toastBarHeight': 0,
-			'--toastPadding': '0 10px',
-			'--toastBorderRadius': '0.5rem'
-		}
-	};
+  let options = {
+    theme: {
+      "--toastBarHeight": 0,
+      "--toastPadding": "0 10px",
+      "--toastBorderRadius": "0.5rem",
+    },
+  };
 
-	let protectedRoutes = new Set(['/login', '/aa1834160', '/password_update']);
+  let protectedRoutes = new Set(["/login", "/aa1834160", "/password_update"]);
 </script>
 
 <SvelteToast {options} />
 {#if protectedRoutes.has($page.url.pathname)}
-	<slot />
+  <slot />
 {:else}
-	<div class="drawer lg:drawer-open">
-		<input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
-		<div class="drawer-content flex flex-col items-center justify-center">
-			<slot />
-			<!-- <label for="my-drawer-2" class="btn btn-primary drawer-button lg:hidden">Open drawer</label> -->
-		</div>
-		<div class="drawer-side">
-			<label for="my-drawer-2" class="drawer-overlay" />
-			<ul class="menu p-4 w-80 h-full bg-base-200 text-base-content">
-				<div class="menu-title text-white">
-					<h1
-						class="text-xl font-medium bg-base-200 flex justify-between
+  <div class="drawer lg:drawer-open">
+    <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
+    <div class="drawer-content flex flex-col items-center justify-center">
+      <slot />
+      <!-- <label for="my-drawer-2" class="btn btn-primary drawer-button lg:hidden">Open drawer</label> -->
+    </div>
+    <div class="drawer-side">
+      <label for="my-drawer-2" class="drawer-overlay" />
+      <ul class="menu p-4 w-80 h-full bg-primary text-white">
+        <div class="menu-title text-white">
+          <h1
+            class="text-xl font-medium flex justify-between
         place-items-center"
-					>
-						Menu <form method="POST">
-							<button type="submit" formaction="?/logout"><Fa icon={faRightFromBracket} /></button>
-						</form>
-					</h1>
-				</div>
-				<li><a href="/">Clientes</a></li>
-			</ul>
-		</div>
-	</div>
+          >
+            Menu <form method="POST">
+              <button type="submit" formaction="?/logout"
+                ><Fa icon={faRightFromBracket} /></button
+              >
+            </form>
+          </h1>
+        </div>
+        <li><a href="/">Clientes</a></li>
+      </ul>
+    </div>
+  </div>
 {/if}
 
 <style>
-	:global(.success) {
-		--toastBackground: hsl(var(--su));
-		--toastColor: hsl(var(--suc));
-	}
+  :global(.success) {
+    --toastBackground: hsl(var(--su));
+    --toastColor: hsl(var(--suc));
+  }
 
-	:global(.warning) {
-		--toastBackground: hsl(var(--wa));
-		--toastColor: hsl(var(--wac));
-	}
+  :global(.warning) {
+    --toastBackground: hsl(var(--wa));
+    --toastColor: hsl(var(--wac));
+  }
 </style>

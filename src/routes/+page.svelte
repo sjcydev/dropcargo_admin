@@ -25,7 +25,7 @@ ${usuario.cedula} ${usuario.telefono} ${usuario.correo}`,
   <title>Clientes</title>
 </svelte:head>
 
-<div class="overflow-x-auto w-full h-full p-5 text-primary-content">
+<div class="overflow-x-auto w-full h-full p-5 text-neutral">
   <h1 class="text-2xl font-medium">Clientes</h1>
 
   <div class="my-3 w-full">

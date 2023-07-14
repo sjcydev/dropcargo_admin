@@ -54,11 +54,20 @@ export async function createInvoice(
 
   const fecha = new Date().toLocaleDateString("en-GB");
 
+  let numero_factura = String(factura_id);
+
+  if (numero_factura.length < 4) {
+    const zeros = 4 - numero_factura.length;
+    for (let i = 0; i < zeros; i++) {
+      numero_factura = "0" + numero_factura;
+    }
+  }
+
   autoTable(doc, {
     body: [
       [
         {
-          content: `Factura No. ${factura_id}`,
+          content: `Factura No. ${numero_factura}`,
           styles: {
             halign: "right",
             fontSize: 14,
@@ -214,8 +223,8 @@ export async function createInvoice(
     body: [
       ["Banco General"],
       ["Nombre: DropCargo Express"],
-      ["Tipo de Cuenta: "],
-      ["Cuenta: "],
+      ["Tipo de Cuenta: Ahorros"],
+      ["Cuenta: 04-72-96-0029922"],
     ],
     styles: { halign: "center" },
     pageBreak: "avoid",
@@ -233,6 +242,8 @@ export async function createInvoice(
       doc.text(str, data.settings.margin.left, pageHeight - 40);
     },
   });
+
+  doc.save("test.pdf");
 
   const base = await generateBase64(doc.output("blob"));
   return base;

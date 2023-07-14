@@ -243,8 +243,6 @@ export async function createInvoice(
     },
   });
 
-  doc.save("test.pdf");
-
   const base = await generateBase64(doc.output("blob"));
   return base;
 }

@@ -210,6 +210,7 @@
                   on:click={() => {
                     especial = false;
                     infoTracking.base = precioBase;
+                    infoTracking.precio = infoTracking.base;
                   }}
                   checked
                 />

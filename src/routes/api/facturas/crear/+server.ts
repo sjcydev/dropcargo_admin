@@ -2,7 +2,7 @@ import type { RequestEvent } from "./$types";
 import { prisma } from "$lib/server/prisma";
 
 export const POST = async ({ request }: RequestEvent) => {
-  const { info, id } = await request.json();
+  let { info, id } = await request.json();
   const fecha = new Date().toLocaleDateString("en-GB");
 
   const factura = await prisma.facturas.create({

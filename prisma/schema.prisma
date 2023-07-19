@@ -26,6 +26,7 @@ model Facturas {
   fecha      String
   Usuarios   Usuarios    @relation(fields: [casillero], references: [id])
   trackings  Trackings[]
+  pagado     Boolean     @default(false)
 }
 
 model Trackings {

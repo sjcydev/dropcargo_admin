@@ -24,9 +24,10 @@ model Facturas {
   factura_id Int         @id @default(autoincrement())
   casillero  Int
   fecha      String
-  Usuarios   Usuarios    @relation(fields: [casillero], references: [id])
+  cliente    Usuarios    @relation(fields: [casillero], references: [id])
   trackings  Trackings[]
   pagado     Boolean     @default(false)
+  total      Float       @default(0) @db.Float
 }
 
 model Trackings {

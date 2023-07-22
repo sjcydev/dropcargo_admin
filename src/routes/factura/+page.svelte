@@ -125,7 +125,7 @@
         resetCliente();
         info.reset();
       }
-    }, 2000);
+    }, 1500);
   }
 </script>
 

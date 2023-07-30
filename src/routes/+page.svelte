@@ -3,6 +3,7 @@
   import { createSearchStore, searchHandler } from "$lib/stores/search";
   import { onDestroy } from "svelte";
   import { goto } from "$app/navigation";
+  import { paginate, LightPaginationNav } from "svelte-paginate";
 
   export let data: { usuarios: Usuarios[] };
 
@@ -12,9 +13,18 @@
 ${usuario.cedula} ${usuario.telefono} ${usuario.correo}`,
   }));
 
+  let pageSize = 25;
+  let currentPage = 1;
+
   const searchStore = createSearchStore(searchUsuarios);
 
   const unsubscribe = searchStore.subscribe((model) => searchHandler(model));
+
+  $: paginatedItems = paginate({
+    items: $searchStore.filtered,
+    pageSize,
+    currentPage,
+  });
 
   onDestroy(() => {
     unsubscribe();
@@ -33,8 +43,18 @@ ${usuario.cedula} ${usuario.telefono} ${usuario.correo}`,
       class="input input-bordered input-primary w-full"
       placeholder="Busqueda"
       bind:value={$searchStore.search}
+      on:input={() => (currentPage = 1)}
     />
   </div>
+
+  <LightPaginationNav
+    totalItems={$searchStore.filtered.length}
+    {pageSize}
+    {currentPage}
+    limit={1}
+    showStepOptions={true}
+    on:setPage={(e) => (currentPage = e.detail.page)}
+  />
 
   <table class="table table-sm">
     <thead>
@@ -48,7 +68,7 @@ ${usuario.cedula} ${usuario.telefono} ${usuario.correo}`,
       </tr>
     </thead>
     <tbody>
-      {#each $searchStore.filtered as usuario}
+      {#each paginatedItems as usuario}
         <tr
           class="hover:bg-base-200 cursor-pointer"
           on:click={() => goto(`/clientes/${usuario.casillero}`)}
@@ -74,3 +94,9 @@ ${usuario.cedula} ${usuario.telefono} ${usuario.correo}`,
     </tfoot>
   </table>
 </div>
+
+<style>
+  :global(.pagination-nav) {
+    box-shadow: none !important;
+  }
+</style>

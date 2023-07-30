@@ -15,7 +15,8 @@ function generateBase64(file: Blob) {
 export async function createInvoice(
   info: Factura,
   factura_id: number,
-  cliente: Cliente
+  cliente: Cliente,
+  descargar = false
 ) {
   let trackings = info.trackings.map(
     ({ numero_tracking, peso, base, precio }) => [
@@ -242,6 +243,10 @@ export async function createInvoice(
       doc.text(str, data.settings.margin.left, pageHeight - 40);
     },
   });
+
+  if (descargar) {
+    doc.save(`Factura-${factura_id}.pdf`);
+  }
 
   const base = await generateBase64(doc.output("blob"));
   return base;

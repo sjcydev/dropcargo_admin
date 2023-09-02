@@ -24,7 +24,7 @@
   export let trackings: Trackings[];
 
   let ubicacion = "Miraflores Calle 79B Oeste, Casa 195";
-  let maps = "https://maps.app.goo.gl/6umy2Deq1bqTzmZT6?g_st=ic";
+  let maps = "https://maps.app.goo.gl/w8SLQSWZCCbS2sQa8?g_st=iw";
 
   const fontFamily =
     '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif';

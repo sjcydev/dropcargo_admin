@@ -1,6 +1,7 @@
 <script>
   import { page } from "$app/stores";
   import "../app.css";
+  import { navigating } from "$app/stores";
   import { SvelteToast } from "@zerodevx/svelte-toast";
   import Fa from "svelte-fa";
   import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
@@ -23,7 +24,11 @@
   <div class="drawer lg:drawer-open">
     <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
     <div class="drawer-content flex flex-col items-center justify-center">
-      <slot />
+      {#if $navigating}
+        <span class="loading loading-infinity text-primary w-20" />
+      {:else}
+        <slot />
+      {/if}
       <!-- <label for="my-drawer-2" class="btn btn-primary drawer-button lg:hidden">Open drawer</label> -->
     </div>
     <div class="drawer-side">

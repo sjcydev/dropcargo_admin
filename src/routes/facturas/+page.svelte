@@ -10,6 +10,8 @@
   import axios from "axios";
   import { createInvoice } from "$lib/utils/createpdf";
   import { paginate, LightPaginationNav } from "svelte-paginate";
+  import { applyAction, enhance } from "$app/forms";
+  import type { SubmitFunction } from "@sveltejs/kit";
 
   export let data: { facturas: VerFacturas[] };
 
@@ -34,9 +36,37 @@
     unsubscribe();
   });
 
-  async function marcarPagado(factura_id: number, pagado: boolean) {
-    await axios.post(`/api/facturas/actualizar/${factura_id}`, { pagado });
-  }
+  // async function marcarPagado(
+  //   factura_id: number,
+  //   pagado: boolean,
+  //   idx: number
+  // ) {
+  //   // paginatedItems[idx].pagado = pagado;
+  //   await axios.post(`/api/facturas/actualizar/${factura_id}`, { pagado });
+  //   // paginatedItems = paginatedItems;
+  // }
+
+  let pagoLoading = false;
+  const marcarPagado: SubmitFunction = () => {
+    pagoLoading = true;
+
+    return async ({ update, result, formData }) => {
+      pagoLoading = false;
+
+      if (result.type === "success") {
+        const index = Number(formData.get("index"));
+        const pagado = formData.get("pagado");
+        let status = false;
+
+        if (pagado === "false") {
+          status = true;
+        }
+
+        $searchStore.filtered[index].pagado = status;
+        await update();
+      }
+    };
+  };
 </script>
 
 <svelte:head>
@@ -89,20 +119,28 @@
           <td>{factura.cliente.cedula}</td>
           <td>${factura.total.toFixed(2)}</td>
           <td class="text-lg text-center whitespace-nowrap w-1">
-            <label class="swap swap-rotate">
+            <form
+              method="POST"
+              action="?/update_pagado"
+              use:enhance={marcarPagado}
+            >
               <input
-                type="checkbox"
-                checked={factura.pagado}
-                on:change={() =>
-                  marcarPagado(factura.factura_id, factura.pagado)}
+                type="hidden"
+                value={factura.factura_id}
+                name="factura_id"
               />
-              <div class="swap-on">
-                <Fa class="text-green-500 text-center" icon={faCircleCheck} />
-              </div>
-              <div class="swap-off">
-                <Fa class="text-red-500 text-center" icon={faCircleXmark} />
-              </div>
-            </label>
+              <input type="hidden" value={factura.pagado} name="pagado" />
+              <input type="hidden" value={idx} name="index" />
+              <button type="submit">
+                {#if pagoLoading}
+                  <span class="loading loading-spinner loading-sm" />
+                {:else if factura.pagado}
+                  <Fa class="text-green-500 text-center" icon={faCircleCheck} />
+                {:else}
+                  <Fa class="text-red-500 text-center" icon={faCircleXmark} />
+                {/if}
+              </button>
+            </form>
           </td>
           <td class="text-right whitespace-nowrap w-1"
             ><button

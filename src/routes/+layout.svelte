@@ -23,7 +23,7 @@
   {#if $navigating}
     <div class="hero min-h-screen bg-base-200">
       <div class="hero-content w-full max-w-sm flex-col">
-        <span class="loading loading-infinity text-secondary w-20" />
+        <span class="loading loading-infinity text-primary w-20" />
       </div>
     </div>
   {:else}
@@ -103,6 +103,7 @@
           <li><a href="/facturar">Facturar</a></li>
           <li><a href="/facturas">Ver Facturas</a></li>
           <li><a href="/tracking">Tracking Interno</a></li>
+          <li><a href="/enviar_correo">Crear Correo</a></li>
         </ul>
       </div>
       <a href="/" class="btn btn-ghost normal-case text-xl">DropCargo Express</a
@@ -114,9 +115,20 @@
         <li><a href="/facturar">Facturar</a></li>
         <li><a href="/facturas">Ver Facturas</a></li>
         <li><a href="/tracking">Tracking Interno</a></li>
+        <li><a href="/enviar_correo">Crear Correo</a></li>
       </ul>
     </div>
-    <div class="navbar-end" />
+    <div class="navbar-end">
+      <form method="POST">
+        <button
+          type="submit"
+          class="mr-3 lg:mr-10 flex items-center"
+          formaction="/?/logout"
+          ><span class="hidden mr-2 lg:block">Cerrar Sesión</span>
+          <Fa icon={faRightFromBracket} /></button
+        >
+      </form>
+    </div>
   </div>
   {#if $navigating}
     <div class="hero min-h-screen bg-base-200">

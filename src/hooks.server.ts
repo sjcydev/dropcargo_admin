@@ -8,7 +8,8 @@ const auth_handle: Handle = async ({ event, resolve }) => {
     event.url.pathname.startsWith("/facturas") ||
     event.url.pathname.startsWith("/tracking") ||
     event.url.pathname.startsWith("/password_update") ||
-    event.url.pathname.startsWith("/clientes");
+    event.url.pathname.startsWith("/clientes") ||
+    event.url.pathname.startsWith("/enviar_correos");
 
   const { user } = await event.locals.auth.validateUser();
   if (protected_urls) {

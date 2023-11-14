@@ -38,7 +38,7 @@ export const actions: Actions = {
 
     const clientes = await prisma.usuarios.findMany();
 
-    // await enviarClientes(subject, body, body_text, clientes);
+    await enviarClientes(subject, body, body_text, clientes);
 
     throw redirect(303, "/");
   },

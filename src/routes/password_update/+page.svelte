@@ -1,8 +1,8 @@
 <script lang="ts">
-  import axios from "axios";
   import { toast } from "@zerodevx/svelte-toast";
-  import { goto } from "$app/navigation";
   import { page } from "$app/stores";
+  import { applyAction, enhance } from "$app/forms";
+  import type { SubmitFunction } from "@sveltejs/kit";
 
   toast.push(
     "La contraseña creada anteriormente era temporal. Porfavor actualizar la contraseña.",
@@ -13,38 +13,31 @@
   let confirmed = "";
 
   let loading = false;
-  async function iniciarUsuario(event: Event) {
+
+  const update_password: SubmitFunction = ({ formData, cancel }) => {
     loading = true;
-    if (password === confirmed) {
-      axios
-        .post("/api/auth/update_password", {
-          username: $page.data.username,
-          password,
-          userID: $page.data.userID,
-        })
-        .then(({ data }) => {
-          const { status, message } = data;
-          toast.push(message, { classes: [status] });
-
-          const form = event.target as HTMLFormElement;
-          form.reset();
-
-          password = "";
-          confirmed = "";
-
-          loading = false;
-          goto("/");
-        })
-        .catch(({ response }) => {
-          loading = false;
-          const { status, message } = response.data;
-          toast.push(message, { classes: [status] });
-        });
-    } else {
-      toast.push("Contraseñas no coinciden", { classes: ["warning"] });
+    if (formData.get("password") !== formData.get("confirmed")) {
       loading = false;
+      cancel();
+      toast.push("Contraseñas no coinciden", { classes: ["warning"] });
     }
-  }
+
+    return async ({ result }) => {
+      loading = false;
+
+      if (result.type === "success" || result.type === "redirect") {
+        toast.push("Contraseña actualizada", { classes: ["success"] });
+        await applyAction(result);
+      }
+
+      if (result.type === "failure") {
+        toast.push(
+          "Se requiere nueva contraseña y confirmación de la nueva contraseña",
+          { classes: ["warning"] }
+        );
+      }
+    };
+  };
 </script>
 
 <svelte:head>
@@ -56,22 +49,24 @@
     <form
       class="card flex-shrink-0 w-full shadow-2xl bg-base-100"
       method="POST"
-      on:submit|preventDefault={(e) => iniciarUsuario(e)}
+      use:enhance={update_password}
     >
       <div class="card-body">
         <h1
-          class="text-2xl text-left font-medium tracking-wide text-accent-content"
+          class="text-2xl text-left font-medium tracking-wide text-neutral-focus"
         >
           Actualizar Contraseña
         </h1>
         <div class="form-control mt-3 lg:mt-4">
+          <input type="hidden" value={$page.data.userID} name="userID" />
+          <input type="hidden" value={$page.data.username} name="username" />
           <input
             type="password"
             placeholder="Nueva Contraseña"
             class="input input-bordered
-        input-primary"
+        input-secondary"
             bind:value={password}
-            required
+            name="password"
           />
         </div>
         <div class="form-control mt-3 lg:mt-4">
@@ -79,13 +74,13 @@
             type="password"
             placeholder="Confirmar Contraseña"
             class="input input-bordered
-        input-primary"
+        input-secondary"
             bind:value={confirmed}
-            required
+            name="confirmed"
           />
         </div>
         <div class="form-control mt-6">
-          <button type="submit" class="btn btn-primary">
+          <button type="submit" class="btn btn-secondary">
             {#if loading}
               <span class="loading loading-spinner loading-md" />
             {:else}

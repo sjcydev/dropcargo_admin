@@ -8,10 +8,6 @@
   let info: Factura = {
     casillero: "",
     trackings: [],
-    reset: function () {
-      this.casillero = "";
-      this.trackings = [];
-    },
   };
 
   const precioBase = 2.75;
@@ -33,6 +29,8 @@
     nombre: "",
     apellido: "",
     correo: "",
+    precio: 2.75,
+    telefono: "",
   };
 
   function resetCliente() {
@@ -40,6 +38,13 @@
     cliente.nombre = "";
     cliente.apellido = "";
     cliente.correo = "";
+    cliente.precio = 2.75;
+    cliente.telefono = "";
+  }
+
+  function resetInfo() {
+    info.casillero = "";
+    info.trackings = [];
   }
 
   let creating = false;
@@ -58,12 +63,17 @@
       await axios
         .post("/api/facturas/crear", { info, id: cliente.id, total })
         .then(async ({ data }) => {
-          const { status, message, factura_id } = data;
+          const { status, message, factura } = data;
 
-          let pdf = await createInvoice(info, factura_id, cliente);
+          let pdf = await createInvoice(info, factura.factura_id, cliente);
 
           axios
-            .post("/api/emails/facturar", { info, cliente, factura_id, pdf })
+            .post("/api/emails/facturar", {
+              info,
+              cliente,
+              factura_id: factura.factura_id,
+              pdf,
+            })
             .then(({ data }) => {
               toast.push(data.message, { classes: [data.status] });
             });
@@ -71,7 +81,7 @@
           toast.push(message, { classes: [status] });
           const form = event.target as HTMLFormElement;
           form.reset();
-          info.reset();
+          resetInfo();
           resetCliente();
           creating = false;
         })
@@ -104,29 +114,49 @@
   }
 
   let timeout: ReturnType<typeof setTimeout>;
+let searching = false;
 
-  let searching = false;
-  function handleCasilleroChange() {
-    clearTimeout(timeout);
-    timeout = setTimeout(async () => {
-      const casillero = parseInt(info.casillero) || "";
-      if (String(casillero).length > 0) {
-        searching = true;
-        await axios.get(`/api/clientes/${casillero}`).then(({ data }) => {
-          if (data.cliente) {
-            cliente = data.cliente;
-          } else {
-            resetCliente();
-            info.reset();
-          }
-          searching = false;
-        });
-      } else {
-        resetCliente();
-        info.reset();
-      }
-    }, 1500);
+function handleCasilleroChange() {
+  clearTimeout(timeout);
+  timeout = setTimeout(async () => {
+    const casillero = info.casillero as string;
+    if (casillero.length === 0) {
+      resetCliente();
+      resetInfo();
+      return;
+    }
+
+    searching = true;
+    const url = /\d/.test(casillero) ? `/api/clientes/${casillero}` : `/api/corporativo/${casillero}`;
+    
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      processClienteData(data);
+    } catch (error) {
+      console.error('Error fetching client data:', error);
+    } finally {
+      searching = false;
+    }
+  }, 1500);
+}
+
+function processClienteData(data: any) {
+  if (data.cliente) {
+    cliente = data.cliente;
+    especial = cliente.precio !== precioBase;
+    infoTracking.base = cliente.precio;
+    infoTracking.precio = infoTracking.base;
+  } else {
+    resetCliente();
+    resetInfo();
   }
+}
+
+  const handlePriceChange = () => {
+    infoTracking.precio = infoTracking.base * infoTracking.peso;
+    infoTracking.precio = Number(infoTracking.precio.toFixed(2));
+  };
 </script>
 
 <svelte:head>
@@ -149,7 +179,9 @@
             <span class="label-text"
               >Casillero
               {#if searching}
-                <span class="loading loading-spinner loading-xs text-primary" />
+                <span
+                  class="loading loading-spinner loading-xs text-secondary"
+                />
               {/if}
             </span>
           </label>
@@ -158,14 +190,14 @@
               type="text"
               name="casillero"
               class="input input-bordered
-        input-primary join-item w-full"
+        input-secondary join-item w-full"
               bind:value={info.casillero}
               required
               on:input={() => handleCasilleroChange()}
             />
             <button
               type="button"
-              class="btn btn-primary join-item"
+              class="btn btn-secondary join-item"
               on:click={() => handleCasilleroChange()}>Buscar</button
             >
           </div>
@@ -178,7 +210,7 @@
               type="text"
               placeholder="Nombre"
               class="input input-bordered
-        input-primary w-full"
+        input-secondary w-full"
               bind:value={cliente.nombre}
               disabled
             />
@@ -188,7 +220,7 @@
               type="text"
               placeholder="Apellido"
               class="input input-bordered
-        input-primary w-full"
+        input-secondary w-full"
               bind:value={cliente.apellido}
               disabled
             />
@@ -199,7 +231,7 @@
             type="text"
             placeholder="Correo"
             class="input input-bordered
-        input-primary"
+        input-secondary"
             bind:value={cliente.correo}
             disabled
           />
@@ -212,13 +244,13 @@
                 <input
                   type="radio"
                   name="tipo"
-                  class="radio radio-primary"
+                  class="radio radio-secondary"
                   on:click={() => {
                     especial = false;
                     infoTracking.base = precioBase;
                     infoTracking.precio = infoTracking.base;
                   }}
-                  checked
+                  checked={!especial}
                 />
                 <span class="label-text ml-2">Cliente Casillero</span>
               </label>
@@ -228,8 +260,9 @@
                 <input
                   type="radio"
                   name="tipo"
-                  class="radio radio-primary"
+                  class="radio radio-secondary"
                   on:click={() => (especial = true)}
+                  checked={especial}
                 />
                 <span class="label-text ml-2">Cliente Precio Especial</span>
               </label>
@@ -240,7 +273,7 @@
               <h2 class="text-xl">Trackings</h2>
 
               <button
-                class="btn btn-primary"
+                class="btn btn-secondary"
                 type="button"
                 onclick="add_tracking.showModal()">Añadir</button
               >
@@ -263,15 +296,9 @@
                         type="text"
                         placeholder="Peso"
                         class="input input-bordered
-        input-primary"
+        input-secondary"
                         bind:value={infoTracking.peso}
-                        on:input={() => {
-                          infoTracking.precio =
-                            infoTracking.base * infoTracking.peso;
-                          infoTracking.precio = Number(
-                            infoTracking.precio.toFixed(2)
-                          );
-                        }}
+                        on:input={handlePriceChange}
                         required
                       />
                     </div>
@@ -282,7 +309,7 @@
                       <input
                         type="text"
                         class="input input-bordered
-        input-primary"
+        input-secondary"
                         bind:value={infoTracking.numero_tracking}
                         required
                       />
@@ -296,16 +323,10 @@
                         name="precio"
                         placeholder="Precio"
                         class="input input-bordered
-        input-primary"
+        input-secondary"
                         bind:value={infoTracking.base}
                         disabled={!especial}
-                        on:input={() => {
-                          infoTracking.precio =
-                            infoTracking.base * infoTracking.peso;
-                          infoTracking.precio = Number(
-                            infoTracking.precio.toFixed(2)
-                          );
-                        }}
+                        on:input={handlePriceChange}
                       />
                     </div>
                     <div class="form-control mt-2">
@@ -317,12 +338,12 @@
                         name="precio"
                         placeholder="Total"
                         class="input input-bordered
-        input-primary"
+        input-secondary"
                         bind:value={infoTracking.precio}
                         disabled
                       />
                     </div>
-                    <button type="submit" class="btn btn-primary w-full mt-6"
+                    <button type="submit" class="btn btn-secondary w-full mt-6"
                       >Añadir</button
                     >
                   </form>
@@ -370,7 +391,7 @@
           </div>
         {/if}
         <div class="form-control mt-6">
-          <button type="submit" class="btn btn-primary">
+          <button type="submit" class="btn btn-secondary">
             {#if creating}
               <span class="loading loading-spinner loading-md" />
             {:else}

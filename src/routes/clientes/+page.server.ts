@@ -1,5 +1,14 @@
-import { redirect } from "@sveltejs/kit";
+import type { PageServerLoad } from "./$types";
+import { prisma } from "$lib/server/prisma";
 
-export function load() {
-  throw redirect(308, "/");
-}
+export const load: PageServerLoad = async () => {
+  const usuarios = prisma.usuarios.findMany({
+    orderBy: [
+      {
+        casillero: "asc",
+      },
+    ],
+  });
+
+  return { usuarios };
+};

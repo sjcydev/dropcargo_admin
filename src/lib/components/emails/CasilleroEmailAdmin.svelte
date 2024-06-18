@@ -9,8 +9,6 @@
     Section,
     Text,
     Img,
-    Link,
-    styleToString,
   } from "svelte-email";
 
   let logo =
@@ -18,27 +16,35 @@
   let logoNombre =
     "https://res.cloudinary.com/dx312n0ce/image/upload/f_auto,q_auto/vvvwedj4hjflqnlhpwzj";
 
-  const preview = "Tienes paquetes listo para retirar";
+  const preview = "Nuevo Casillero Registrado";
   export let nombre: String;
+  export let apellido: String;
   export let casillero: String;
-  export let trackings: Trackings[];
-  export let sucursal: string;
+  export let correo: String;
+  export let cedula: String;
+  export let telefono: String;
+  export let sucursal: String;
 
-  let ubicacion = "Miraflores Calle 79B Oeste, Casa 195";
-  let maps = "https://goo.gl/maps/LHDtR6rSv4K6YK1v6";
+  let codigo_de_compania = "DROP";
 
   if (sucursal === "Chorrera") {
-    ubicacion =
-      "La Chorrera, La Mata del Coco, Local N˚2, al lado de Servicentro Pepe";
-    maps = "https://maps.app.goo.gl/teDVsk2Mbr5cPA498";
+    codigo_de_compania = "DROPCH";
   }
+
+  let direccion = {
+    direccion1: "7854 NW 46TH ST UNIT 2",
+    estado: "FLORIDA",
+    ciudad: "MIAMI",
+    zip: "33166-5461",
+    pais: "UNITED STATES",
+    tel: "+1 786-622-1058",
+  };
 
   const fontFamily =
     '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif';
 
   const main = {
     backgroundColor: "#ffffff",
-    margin: "0 auto",
   };
 
   const container = {
@@ -86,27 +92,18 @@
     width: "8rem",
     height: "auto",
   };
+
   const logoContainer = {
     display: "flex",
     width: "fit-content",
     margin: "0 auto",
-  };
-
-  const footerTitle = {
-    ...paragraph,
-    fontSize: "16px",
-  };
-
-  const footerText = {
-    ...paragraph,
-    fontSize: "14px",
   };
 </script>
 
 <Html>
   <Head />
   <Preview {preview} />
-  <Container style={main}>
+  <Section style={main}>
     <Container style={container}>
       <Container style={logoContainer}>
         <Img
@@ -126,51 +123,45 @@
         Logo"
         />
       </Container>
-      <Heading style={heading}>Ya puedes retirar tu orden!</Heading>
+      <Heading style={heading}>Nuevo Casillero Registrado</Heading>
       <Text style={paragraph}>
-        Hola {nombre},
-      </Text>
-      <Text style={paragraph}>
-        Esperamos que te encuentres bien. Tu orden llego a Panamá y esta listo
-        para retirar en nuestra sucursal. Al llegar a la sucursal, presentar el
-        numero de casillero que se va a retirar.
-      </Text>
-      <Text style={paragraph}>
-        Nuestra sucursal esta localizada en:
-        <br />
-        <Link href={maps}>{ubicacion}</Link>
+        Un nuevo usuario se ha registrado. Debajo tendras la información del
+        casillero del usuario.
       </Text>
       <Hr style={hr} />
-      <Heading style={heading2}>Información de tus Paquetes</Heading>
-      <Text style={paragraph}>Casillero: {casillero}</Text>
-      <table style={styleToString(container)}>
-        <thead>
-          <tr style="text-align: left;">
-            <th>Numero de Tracking</th>
-            <th>Peso (lbs)</th>
-            <th>Precio</th>
-          </tr>
-        </thead>
-        <tbody>
-          {#each trackings as tracking}
-            <tr>
-              <td>
-                {tracking.numero_tracking}
-              </td>
-              <td>
-                {tracking.peso}
-              </td>
-              <td>
-                {tracking.precio}
-              </td>
-            </tr>
-          {/each}
-        </tbody>
-      </table>
-      <Text style={paragraph}
-        >Puedes encontrar tambien adjuntado la factura con más detalles.</Text
-      >
-      <Text style={paragraph}>Gracias por preferir DropCargoExpress!</Text>
+      <Heading style={heading2}>Información del Usuario</Heading>
+      <Text style={paragraph}>
+        Nombre: {nombre}
+        {apellido}
+        <br />
+        Cedula: {cedula}
+        <br />
+        Correo: {correo}
+        <br />
+        Telefono: {telefono}
+      </Text>
+      <Hr style={hr} />
+      <Heading style={heading2}>Información del Casillero</Heading>
+      <Text style={paragraph}>
+        Nombre: {codigo_de_compania}
+        {nombre}
+        {apellido}
+        <br />
+        Address Line 1: {direccion.direccion1}
+        {codigo_de_compania}
+        <br />
+        Address Line 2: {codigo_de_compania}{casillero}
+        <br />
+        City: {direccion.ciudad}
+        <br />
+        State: {direccion.estado}
+        <br />
+        Zip Code: {direccion.zip}
+        <br />
+        Country: {direccion.pais}
+        <br />
+        Tel: {direccion.tel}
+      </Text>
     </Container>
-  </Container>
+  </Section>
 </Html>

@@ -16,6 +16,7 @@ export const POST = async ({ request }: RequestEvent) => {
         nombre: cliente.nombre,
         casillero: info.casillero,
         trackings: info.trackings,
+        sucursal: cliente.sucursal,
       },
     });
     const text = render({
@@ -24,6 +25,7 @@ export const POST = async ({ request }: RequestEvent) => {
         nombre: cliente.nombre,
         casillero: info.casillero,
         trackings: info.trackings,
+        sucursal: cliente.sucursal,
       },
       options: {
         plainText: true,
@@ -41,14 +43,11 @@ export const POST = async ({ request }: RequestEvent) => {
       .sendTransacEmail({
         sender: {
           email: "facturas@dropcargoexpress.com",
-          name: "DropCargo Express",
+          name: "Facturación Drop Cargo Express",
         },
         to: [
           {
             email: cliente.correo,
-          },
-          {
-            email: "dropcargo.exp@gmail.com",
           },
         ],
         subject: "Tienes paquetes listo para retirar!",
@@ -56,7 +55,7 @@ export const POST = async ({ request }: RequestEvent) => {
         textContent: text,
         attachment: [{ content: pdf, name: `Factura-${factura_id}.pdf` }],
       })
-      .catch((err) => {
+      .catch(() => {
         return new Response(
           JSON.stringify({
             message: "Hubo un error, contacte al tecnico",

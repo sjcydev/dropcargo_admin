@@ -232,17 +232,17 @@ export async function createInvoice(
 
   autoTable(doc, {
     didDrawPage: function (data) {
-      let numero = "+507 6630-2373 ";
-      const numero2 = "+507 6788-5008";
+      let numero = ["+507 6630-2373", "+507 6737-7747", "+507 6788-5008"].join(
+        " "
+      );
       let direccion = "  \nMiraflores Calle 79B Oeste, Casa 195";
 
       if ((cliente as Usuarios).sucursal === "Chorrera") {
-        numero = "+507 6737-7747";
         direccion =
-          "La Chorrera, La Mata del Coco, Local N˚2, al lado de Servicentro Pepe";
+          "La Chorrera, La Mata del Coco, Local N_2, al lado de Servicentro Pepe";
       }
 
-      let str = `DropCargo Express | Teléfonos ${numero} ${numero2}\n${direccion}`;
+      let str = `DropCargo Express | Teléfonos ${numero}\n${direccion}`;
       doc.setFontSize(11);
 
       var pageSize = doc.internal.pageSize;

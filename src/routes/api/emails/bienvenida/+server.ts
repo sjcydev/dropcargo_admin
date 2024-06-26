@@ -92,13 +92,18 @@ export const POST = async ({ request }: RequestEvent) => {
         plainText: true,
       },
     });
+    let emailInfo = "dropcargo.exp@gmail.com";
+
+    if (sucursal === "Chorrera") {
+      emailInfo = "dropcargo.cho@gmail.com";
+    }
 
     await sibAPI.sendTransacEmail({
       sender: {
         email: "info@dropcargoexpress.com",
         name: "Drop Cargo Express",
       },
-      to: [{ email: "info@dropcargoexpress.com" }],
+      to: [{ email: emailInfo }],
       subject: "Nuevo Casillero Registrado",
       htmlContent: admin,
       textContent: textAdmin,
